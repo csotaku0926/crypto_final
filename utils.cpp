@@ -61,3 +61,16 @@ void transpose(const vector<vector<int>>& a,
             result[j][i] = a[i][j];
 }
 
+// 1-input version transpose
+vvint transpose(const vvint& a) {
+    int m = a.size(), n = a[0].size();
+    vvint result(n, vint(m, 0));
+    
+    if (m == 0 || n == 0) return result;
+
+    for (int i=0; i<m; i++)
+        for (int j=0; j<n; j++)
+            result[j][i] = a[i][j];
+    
+    return result;
+}
