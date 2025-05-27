@@ -14,6 +14,12 @@ void print_vector(const vector<int>& vec) {
     puts("");
 }
 
+void print_vector(const vector<bool>& vec) {
+    for (size_t i = 0; i < vec.size(); ++i) 
+        printf("%d ", vec[i]);
+    puts("");
+}
+
 void print_matrix(const vector<vector<int>>& vec) {
     for (size_t i = 0; i < vec.size(); ++i) {
         for (size_t j = 0; j < vec[0].size(); ++j) 
