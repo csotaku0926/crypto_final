@@ -177,7 +177,7 @@ public:
 
 int main(void) {
     int N = 3, Q = 229;
-    vector<bool> bits{1}; //, 0b0, 0b1, 0b0, 0b1, 0b0, 0b1, 0b0, 0b0, 0b1, 0b0, 0b1};
+    vector<bool> bits{1, 0b0, 0b1, 0b0, 0b1, 0b0, 0b1, 0b0, 0b0, 0b1, 0b0, 0b1};
     int m = bits.size();
 
     LWE lwe(N, Q);
@@ -188,20 +188,19 @@ int main(void) {
     vvint c2(1, vint(m, 0));
 
     int n_cnt = 0;
-    int n_try = 5000;
+    int n_try = 1000;
     vector<bool> dec_bits(m);
     
     for (int i=0; i<n_try; i++) {
         bits[0] = i % 2;
-        print_vector(bits);
         lwe.encrypt_bits(bits, c1, c2);
         lwe.decrypt_bits(dec_bits, c1, c2);
-        for (bool bit : dec_bits) {
+        for (int j=0; j<m; j++) {
             // printf("%d ", bit);
-            n_cnt += (bit == bits[0]);
+            n_cnt += (dec_bits[j] == bits[j]);
         }
     }
 
-
+    n_try *= m;
     printf("success rate: %d/%d = %.2f%%\n", n_cnt, n_try, (double)n_cnt / (double)n_try * 100.0);
 }
