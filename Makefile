@@ -1,5 +1,5 @@
 CPP = g++
-SRCS = lwe.cpp utils.cpp
+SRCS = LWE.cpp utils.cpp demo.cpp
 EXE = lwe
 
 all: $(EXE)
