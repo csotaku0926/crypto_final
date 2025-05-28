@@ -46,12 +46,19 @@ public:
     void decrypt_bits(vector<bool>& result, const vvint c1, const vvint c2);
 
     /**
+     * signal function for key exchange
+     * Sig(v) = v belongs in E?
+     * where E = {-floor(q/4), ..., round(q/4)}
+     */
+    bool Sig_keyexc(int v);
+
+    /**
      * RLWE Key Exchange
      * Alice: p_A = A * s_a + 2e_a (mod q)
      * send p_A to Bob
      * Bob: p_B = A^T * s_b + 2e_b (mod q)
      * 
-     * :input: result exchanged info p(N*1)
+     * :input: result exchanged info p(N*1), signal w
      * :input: public key A(N*N), Q
      */
     void gen_key_for_exchange(vvint &p, const vvint A, const int Q, bool is_Bob);
@@ -64,4 +71,11 @@ public:
      * :input: exchanged info p(N*1), public key A(N*N), Q, is_Bob
      */
     void compute_exchanged_key(int &k, const vvint p, const vvint A, const int Q, bool is_Bob);
+
+    /**
+     * key stream used in both initiator and responser
+     * Mod2(v,w) = (v + w * (q-1)/2) mod q mod 2
+     * where w = Sig(v)
+     */
+    int gen_exchange_keystream(int k);
 };

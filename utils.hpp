@@ -3,6 +3,7 @@
 #include <cstdlib>
 #include <cstdio>
 #include <stdint.h>
+#include <fcntl.h>
 
 using namespace std;
 

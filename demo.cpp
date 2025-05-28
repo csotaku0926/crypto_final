@@ -4,11 +4,17 @@
 /**
  * show LWE key exchange process
  */
-void show_key_exchange(vvint A, int Q) {
-    int N = A.size();
+void show_key_exchange(int N, int Q) {
     
+    // A, N, Q is public
     LWE lwe_Alice(N, Q);
+    lwe_Alice.gen_public_key();
+    vvint A(N, vint(N, 0));
+    A = lwe_Alice.A;
+    
     LWE lwe_Bob(N, Q);
+    lwe_Bob._gen_A(N, Q);
+    lwe_Bob.A = A;
 
     // Alice generates exchange info p_A
     vvint p_Alice;
@@ -32,11 +38,20 @@ void show_key_exchange(vvint A, int Q) {
     lwe_Alice.compute_exchanged_key(k_Alice, p_Bob, A, Q, false);
     printf("Alice's exchanged key k_A: %d\n", k_Alice);
     puts("");
+
+    // generate key stream (one-byte for now)
+    int key_Alice = lwe_Alice.gen_exchange_keystream(k_Alice);
+    printf("Alice's keystream: %d\n");
+    
+    int key_Bob = lwe_Bob.gen_exchange_keystream(k_Bob);
+    printf("Bob's keystream: %d\n");
+    puts("");
 }
 
-/** the main function */
-int main(void) {
-    int N = 23, Q = 271;
+/**
+ * demonstrate LWE encrypt/deccrypt
+ */
+void show_encrypt_and_decrypt(int N, int Q) {
     vector<bool> bits{1, 0b0, 0b1, 0b0, 0b1, 0b0, 0b1, 0b0, 0b0, 0b1, 0b0, 0b1};
     int m = bits.size();
 
@@ -56,7 +71,6 @@ int main(void) {
         lwe.encrypt_bits(bits, c1, c2);
         lwe.decrypt_bits(dec_bits, c1, c2);
         for (int j=0; j<m; j++) {
-            // printf("%d ", bit);
             n_cnt += (dec_bits[j] == bits[j]);
         }
     }
@@ -64,5 +78,14 @@ int main(void) {
     n_try *= m;
     printf("success rate: %d/%d = %.2f%%\n", n_cnt, n_try, (double)n_cnt / (double)n_try * 100.0);
 
-    show_key_exchange(lwe.A, lwe.Q);
+}
+
+/** the main function */
+int main(void) {
+    int N = 23, Q = 371;
+
+    show_encrypt_and_decrypt(N, Q);
+    show_key_exchange(N, Q);
+
+    int fd = open("test.txt", O_CREAT);
 }

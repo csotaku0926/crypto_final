@@ -112,6 +112,21 @@ void LWE::decrypt_bits(vector<bool>& result, const vvint c1, const vvint c2) {
     }
 } 
 
+int LWE::gen_exchange_keystream(int k) {
+    int w = this->Sig_keyexc(k);
+    int tmp = k + w * (this->Q - 1) / 2;
+    // tmp mod q
+    tmp = (tmp % this->Q);
+    tmp = (tmp < 0) ? tmp + this->Q : tmp;
+    return tmp & 1; // mod 2
+}
+
+bool LWE::Sig_keyexc(int v) {
+    int low = -this->Q / 4;
+    int high = (int)round((double)this->Q / 4.0);
+    return (low <= v && v <= high);
+}
+
 /**
  * note: generates new secret key and error
  */
@@ -140,6 +155,6 @@ void LWE::compute_exchanged_key(int &k, const vvint p, const vvint A, const int 
 
     // generate small error
     vvint e = this->_gen_bounded_key(1, 1);
-    k = (sp_product[0][0] ) % Q; // why + 2 * e[0][0]
+    k = (sp_product[0][0] ) % Q + 2 * e[0][0];
     k = (k < 0) ? (k + Q) : k; // ensure positive
 }
