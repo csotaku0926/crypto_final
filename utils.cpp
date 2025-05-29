@@ -8,6 +8,12 @@ int uniform_distirbution(int rangeLow, int rangeHigh) {
     return rand_scaled;
 }
 
+void get_rand_vector(vector<bool> &vec, int n) {
+    vec = vector<bool>(n, 0);
+    for (int i=0; i<n; i++)
+        vec[i] = rand() % 2;
+}
+
 void print_vector(const vector<int>& vec) {
     for (size_t i = 0; i < vec.size(); ++i) 
         printf("%d ", vec[i]);
@@ -31,7 +37,7 @@ void print_matrix(const vector<vector<int>>& vec) {
 int matmul(const vector<vector<int>> a, 
     const vector<vector<int>> b, vector<vector<int>>& result) {
     if (a[0].size() != b.size()) {
-        printf("size mismatch: %d != %d\n", a[0].size(), b.size());
+        printf("size mismatch: %ld != %ld\n", a[0].size(), b.size());
         return -1;
     }
 
@@ -73,4 +79,35 @@ vvint transpose(const vvint& a) {
             result[j][i] = a[i][j];
     
     return result;
+}
+
+/**
+ * show basis:
+ * ( A I)
+ * (qI 0)
+ */
+void print_CVP_inputs(const vvint a, int Q, const vvint t) {
+    // basis (A I)
+    putchar('[');
+    int n = a.size();
+    for (int i=0; i<n; i++) {
+        putchar('[');
+        for (int j=0; j<n; j++) printf("%d ", a[i][j]);
+        for (int j=0; j<n; j++) printf("%d ", (j == i)); // I
+        putchar(']');
+    }
+    // basis (qI 0)
+    for (int i=0; i<n; i++) {
+        putchar('[');
+        for (int j=0; j<2*n; j++) printf("%d ", Q * (j == i));
+        putchar(']');
+    }
+    
+    putchar(']');
+
+    // target vector t
+    putchar('[');
+    for (int i=0; i<n; i++) printf("%d ", t[i][0]);
+    for (int i=0; i<n; i++) printf("0 ");
+    putchar(']');
 }

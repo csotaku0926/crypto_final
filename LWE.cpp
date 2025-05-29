@@ -28,7 +28,11 @@ vvint LWE::_gen_A(int n, int q) {
     return A;
 }
 
-    
+void LWE::_set_error_bound(int b) {
+    this->B[0] = -b;
+    this->B[1] = b+1;
+}
+
 LWE::LWE(int N, int Q) {
     srand(0xabcddcba); // Seed for reproducibility
 
@@ -36,23 +40,24 @@ LWE::LWE(int N, int Q) {
     this->Q = Q;
 
     int b = this->_calc_error_bound();
-    this->B[0] = -b; 
-    this->B[1] = b+1;
+    this->_set_error_bound(b);
 
     // gen secret key
     this->sk = this->_gen_bounded_key(this->N, 1);
 }
 
-void LWE::gen_public_key() {
-    // generate uniform matx modulo q
-    this->A = this->_gen_A(this->N, this->Q);
+void LWE::gen_public_key(vvint *A_user) {
+    // generate uniform matx modulo q (if not specified by user)
+    this->A = (A_user) ? *A_user : this->_gen_A(this->N, this->Q);
     vvint sk(this->N, vint(1, 0));
 
     vvint As(this->N, vint(1, 0));
     matmul(this->A, this->sk, As);
     
     // generate error and pubkey y
-    vvint e(this->N, vint(1, 0));
+    this->e = vvint(this->N, vint(1, 0));
+    this->e = this->_gen_bounded_key(N, 1);
+
     this->y = vvint(this->N, vint(1, 0));
     for (int i=0; i<this->N; i++)
         this->y[i][0] = (As[i][0] + e[i][0]) % this->Q;

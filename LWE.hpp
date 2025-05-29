@@ -20,12 +20,18 @@ public:
     
     LWE(int N, int Q);
 
+    /** 
+     * for experiement
+     * Normally, b <= sqrt(q / 4(2n+1)) to make dec success
+    */
+    void _set_error_bound(int b);
+
     /**
      * given private key sk
      * computes y = A * sk + e
      * pubkey is (A, y)
      */
-    void gen_public_key();
+    void gen_public_key(vvint *A_user);
 
     /** 
      * encrypt a bit
